@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de conexiones-Socket.io</title>
+</head>
+<body>
+    <h1>Comunicación bidireccional con Socket.io</h1>
+    <p id="hello"></p>
+    <p>
+        Número de conexiones activas: <b id="conexions"></b>
+    </p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        (function (io){
+            'use strict'
+            var io = io()/* modulo de la linea 14 de index.js */
+            var d = document
+
+            io.on('hello', function (data){/* callback que ejecuta el cliente cuando recibe un msg HELLO(evento) */
+                console.log(data);
+
+                d.querySelector('#hello').innerHTML = data.message;
+
+                io.emit('nombre del evento que quiera', { name: 'Jonathan', twitter: '@jonmircha'});/* esto es recibido por el servidor */
+            });
+
+            io.on('connect users', function (data){
+                console.log('Actualizando desde el servidor. Hay ' + data.numbers + ' conexiones activas');
+
+                d.querySelector('#conexions').innerHTML = data.numbers;
+            });
+        })(io)/* ultimo parentesis, al momento de cargar el codigo se ejecuta automaticamente - FUNCION ANONIMA AUTOEJECUTABLE */ 
+    </script>
+    
+</body>
+</html>

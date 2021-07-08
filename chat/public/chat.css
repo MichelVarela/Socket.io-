@@ -1,0 +1,44 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-size: 16px;
+}
+
+input{
+    outline: transparent;
+}
+
+#chat-form{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: .5rem;
+    font-size: 0;/* para que el espacio entre el input y el button desaparezca */
+    background-color: #1d1d1d;
+}
+
+#chat-form button{
+    padding: .5rem;
+    width: 20%;
+    border: none;
+    background-color: #80bd01 ;
+}
+
+#message-text{
+    padding: .5rem;
+    width: 80%;
+    border: 0;
+}
+
+#chat { list-style-type: none;}
+
+#chat li{
+    padding: .5rem;
+    background-color: #eee;
+}
+
+#chat li:nth-child(odd) { background-color: #ddd; } /* los li pares se pintan de #ddd */

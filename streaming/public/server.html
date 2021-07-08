@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor de streaming</title>
+</head>
+<body>
+    <h1>Servidor de streaming</h1>
+    <p>Esta página transmite en tiempo real el streaming de la cámara web</p>
+    
+    <video id="video"></video>
+    <canvas id="canvas" width="1280" height="720"></canvas>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        ( (d, w, n, io) => {
+            'use strict';
+            
+            var io = io(),
+                startCamera = false, /* me permite saber si la camara esta iniciada o no; por default esta off */
+                video = d.querySelector('#video'),
+                canvas = d.querySelector('#canvas'),
+                context = canvas.getContext('2d');/* canvas necesita un contexto de como se ve proyectado en este caso 2d */
+            
+            n.streaming = (
+            n.getUserMedia ||
+            n.webkitGetUserMedia ||
+            n.mozGetUserMedia ||
+            n.msGetUserMedia
+            );
+            
+            n.streaming({//configuracion del getUserMedia
+                video: true,/* para activar el video */
+                audio: true/* para activar el video */
+            }, stream => {
+                startCamera = true; /* encendemos la camara */
+                video.srcObject = stream;/* captura el origen del stream; a la etiqueta video le asigne la direccion srcObject y crea la URL con lo que viene de stream */
+                video.play();// se utiliza para que funcione correctamente la reproduccion de video
+            }, err => {
+                alert(`error al acceder a la camara web: ${err}`);
+            })
+
+            w.playVideo = (function (cb){// cb indica la callback que se ejecuta dentro en la linea 57-58
+                return w.requestAnimationFrame ||
+					w.webkitRequestAnimationFrame ||
+					w.mozRequestAnimationFrame ||
+					w.msRequestAnimationFrame ||
+					function (cb) {
+						w.setTimeout(cb, 1000/100)/* renderiza o envia 10 img por segundo de esta forma simulamos el tiempo real */
+					}
+            })()//FUNCION AUTOEJECUTABLE
+
+            function streamVideo(context, canvas, video){
+                var outputStream = canvas.toDataURL('image/jpeg', .2)/* imagenes que se forman con codigo para evitar hacer un request(peticion) al servidor; primer parametro tipo de img y porcentaje de  calidad .2 = 20% */
+                context.drawImage(video, 0,0)/* el contexto indica donde  dibujamos la image, primer parametro de donde toma la img */
+
+                if(startCamera){//si la camara esta on
+                    io.emit('streaming', outputStream)/* enviamos las img al servidor */
+                }
+
+                playVideo(() => {/* esto permite emitir las image por canvas consecutivamente simulando en tiempo real */
+                        streamVideo(context, canvas, video)
+                    })
+            }
+
+            w.addEventListener('load', () => {
+                video.style.display = 'none';
+                streamVideo(context, canvas, video)
+            })
+            
+        })(document, window, navigator, io)
+    </script>
+</body>
+</html>

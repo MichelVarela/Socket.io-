@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io</title>
+</head>
+<body>
+    <h3>Ingresar:</h3>
+    <form accept-charset="utf-8" id="loguin_form">
+        <input type="text" placeholder="Correo" id="correo" value="">
+        <input type="text" placeholder="Usuario" id="usuario" value="">
+        <input type="button" value="Entrar" onclick="ingresar()"><!-- el input debe de ser de type button, ya que al hacer submit se recarga la pagina y se pierden los datos -->
+    </form>
+    
+    <hr>
+    
+    <div id="cont_mensajes">
+        
+    </div>
+    
+    <div>
+        <textarea id="mensaje" placeholder="Mensaje"></textarea>
+        <input type="text" id="destinatario" placeholder="Destinatario">
+        <button id="enviar_mensaje" onclick="enviar_mensj()">Enviar</button>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./functions_socket.js"></script>
+    <script>
+
+        function ingresar(){
+            correo = $('#loguin_form #correo').val();
+            usuario = $('#loguin_form #usuario').val();
+
+            loguear(correo,usuario);
+        }
+
+        function enviar_mensj(){
+            mensaje = $('#mensaje').val();
+            destinatario = $('#destinatario').val();
+            if(destinatario != ''){
+                enviar_msj(usuario,mensaje,destinatario);
+            }else{
+                enviar_msj(usuario,mensaje);
+            }
+
+            
+        }
+    </script>
+</body>
+</html>
